@@ -1,16 +1,19 @@
 # TronMask  
 
-TronMask is firstly launched at TRON’s official website and backed by TRON foundation, TronMask is the TRON wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for TRON.   
+The code for TronMask was contributed by a group of Third World developers.
 
-Main functions:    
+Due to the extremely poor network environment in the Third World, a completely transparent, open and stable way to interact with the TRON blockchain without redundant APIs was necessary.
 
-Sending and receiving TRX, TRC10 and TRC20 tokens;  
-Smart contract calls integrated;    
+We have developed TronMask so that the Third World community can open the door to the blockchain.
+
+TronMask supports Firefox, Google Chrome, and Chromium-based browsers. We recommend using the latest available browser version.
+
+TronMask is Fork from TronLink Browser Extension.
 
 
 ## Downloads
-**Chrome** &ndash; [Download](https://chrome.google.com/webstore/detail/ibnejdfjmmkpcnlpebklmnkoeoihofec) &nbsp; [![Chrome Web Store](https://img.shields.io/chrome-web-store/d/ogffaloegjglncjfehdfplabnoondfjo.svg?style=flat-square)](https://chrome.google.com/webstore/detail/ibnejdfjmmkpcnlpebklmnkoeoihofec) &nbsp; [![Chrome Web Store](https://img.shields.io/chrome-web-store/rating/ogffaloegjglncjfehdfplabnoondfjo.svg?style=flat-square)](https://chrome.google.com/webstore/detail/ibnejdfjmmkpcnlpebklmnkoeoihofec)
 
+[ZIP From Release](https://github.com/BlockNG-Foundation/blockng-tronmask-extension/releases)
 
 ## Installation
 
@@ -25,26 +28,11 @@ $ yarn install
 ## Building
 ```sh
 # Build all sources
-$ yarn build
+$ yarn build:zip
 ```
 
-```sh
-# Build the backend, along with the injected page script
-$ yarn build:core
-```
-
-```sh
-# Build only the popup component
-$ yarn build:popup
-```
-
-## Linting
-```sh
-# Run linter over the ./packages folder
-$ yarn lint
-```
 
 ## Links
-+ [Website](https://www.tronmask.org/)
-+ [Support](https://t.me/tronmask)
-+ [Twitter](https://twitter.com/TronLinkWallet)
++ [Website](https://about.blockng.money/)
++ [Support](https://t.me/BlockNGGlobal)
+

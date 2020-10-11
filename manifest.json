@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
-    "name": "TronMask（去中心化钱包）",
-    "version": "1.0.0",
-    "version_name": "1.0.0",
-    "description": "A decentralized wallet, without any interface for statistics",
+    "name": "TronMask",
+    "version": "2100.0.0",
+    "version_name": "2100.0.0",
+    "description": "A fully decentralized / opensourced TRON wallet",
     "author": "tronMask",
     "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-LayQc1iWBC+6WbHHvHZj3uSx3CxrGBHUJBR7si4qf8w=' 'sha256-POEO+wER89cezFVZ27JoP523HJNPMQxmh5Rcz/OZpr4=' 'sha256-IThiKMnsg0UHaLmP7sJxZpd/ohvINImwjxFJyxGFSlk=' https://*.sentry.io https://www.google-analytics.com https://www.googletagmanager.com https://cdnjs.cloudflare.com; object-src 'self'",
     "permissions": [
