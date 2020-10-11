@@ -12,7 +12,7 @@
                 <g id="分组-10" transform="translate(0.000000, 14.000000)">
                     <g id="分组-5">
                         <g id="分组-4" transform="translate(15.000000, 3.000000)">
-                            <circle id="Oval" fill="#636ACC" cx="8" cy="8" r="8"></circle>
+                            <circle id="Oval" fill="#F7861C" cx="8" cy="8" r="8"></circle>
                             <mask id="mask-2" fill="white">
                                 <use xlink:href="#path-1"></use>
                             </mask>

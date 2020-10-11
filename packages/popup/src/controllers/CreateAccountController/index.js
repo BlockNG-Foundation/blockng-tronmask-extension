@@ -1,15 +1,15 @@
 import React from 'react';
 import AccountName from 'components/AccountName';
-import Utils from '@tronlink/lib/utils';
+import Utils from '@tronmask/lib/utils';
 import Lottie from 'react-lottie';
 
-import { PopupAPI } from '@tronlink/lib/api';
-import { CREATION_STAGE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@tronmask/lib/api';
+import { CREATION_STAGE } from '@tronmask/lib/constants';
 
 import WritingPhrase from './stages/WritingPhrase';
 import ConfirmingPhrase from './stages/ConfirmingPhrase';
 
-import * as checkmark from '@tronlink/popup/src/assets/animations/checkmark.json';
+import * as checkmark from '@tronmask/popup/src/assets/animations/checkmark.json';
 
 class CreateAccountController extends React.Component {
     animationOptions = {
@@ -48,7 +48,6 @@ class CreateAccountController extends React.Component {
                 this.mnemonic,
                 this.state.walletName
             );
-
             // This is temp until we have a success component
             PopupAPI.resetState();
         }

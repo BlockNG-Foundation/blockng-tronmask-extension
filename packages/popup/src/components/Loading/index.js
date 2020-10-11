@@ -2,8 +2,8 @@
  * Created by tron on 2019/7/3.
  */
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
-import LoadingGif from 'assets/images/loading_black.gif';
+import Button from '@tronmask/popup/src/components/Button';
+import LoadingGif from 'assets/icon/icon-loading_black.gif';
 
 import { injectIntl } from 'react-intl';
 
@@ -20,7 +20,9 @@ class Loading extends React.Component {
         }
         const iframe = document.createElement('iframe');
         iframe.id = 'tronLedgerBridge';
-        iframe.src = 'https://zacharyle.github.io/tron-ledger-bridge?new='+Math.random();
+        // iframe.src = 'https://zacharyle.github.io/tron-ledger-bridge?new='+Math.random();
+        // iframe.src = 'https://ledger.pmlov.com?new='+Math.random();
+        iframe.src = 'https://chrome-support.tronmask.org/tron-ledger-bridge?new='+Math.random();
         document.head.appendChild(iframe);
     }
 

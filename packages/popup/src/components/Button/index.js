@@ -1,7 +1,7 @@
 import React from 'react';
-import LoadingIndicator from 'assets/images/loader.svg';
+import LoadingIndicator from 'assets/icon/icon-loader.svg';
 
-import { BUTTON_TYPE } from '@tronlink/lib/constants';
+import { BUTTON_TYPE } from '@tronmask/lib/constants';
 import { FormattedMessage } from 'react-intl';
 
 import './Button.scss';

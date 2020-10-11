@@ -1,18 +1,19 @@
 import TronWeb from 'tronweb';
-import Logger from '@tronlink/lib/logger';
+import Logger from '@tronmask/lib/logger';
 import axios from 'axios';
 
 const { HttpProvider } = TronWeb.providers;
 const logger = new Logger('ProxiedProvider');
 
 class ProxiedProvider extends HttpProvider {
-    constructor() {
+    constructor(chainType = 0) {
         super('http://127.0.0.1');
 
         logger.info('Provider initialised');
 
         this.ready = false;
         this.queue = [];
+        this.chainType = chainType;
     }
 
     configure(url) {
@@ -57,14 +58,12 @@ class ProxiedProvider extends HttpProvider {
 
         return super.request(endpoint, payload, method).then(res => {
             const response = res.transaction || res;
-
             Object.defineProperty(response, '__payload__', {
                 writable: false,
                 enumerable: false,
                 configurable: false,
-                value: payload
+                value: { ...payload, chainType: this.chainType }
             });
-
             return res;
         });
     }

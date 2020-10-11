@@ -1,17 +1,17 @@
 {
-  "name": "@tronlink/pageHook",
+  "name": "@tronmask/pageHook",
   "main": "index.js",
-  "repository": "https://github.com/TronLink/TronLink",
-  "author": "Kondax <kondaxsolutions@gmail.com>",
+  "repository": "",
+  "author": "tronMask",
   "private": true,
-  "version": "3.1.0",
+  "version": "1.0.0",
   "scripts": {
     "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/pageHook.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
     "ethers": "^4.0.33",
-    "tronweb": "^2.7.4",
-    "sunweb": "^1.0.7"
+    "tronweb": "^2.10.2",
+    "sunweb": "^1.1.0"
   }
 }

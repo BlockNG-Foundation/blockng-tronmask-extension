@@ -32,6 +32,10 @@ export default {
 
     setChain(chain){
         this.duplex.send('popup', 'setChain', chain, false);
+        this.duplex.send('tab', 'tunnel', {
+            action: 'setChain',
+            data: chain
+        }, false);
     },
 
     setAccounts(accounts) {
@@ -61,32 +65,21 @@ export default {
     setSetting(setting) {
         this.duplex.send('popup', 'setSetting', setting, false);
     },
-    setSelectedBankRecordId(id) {
-        this.duplex.send('popup', 'setSelectedBankRecordId', id, false);
-    },
-
-    changeDealCurrencyPage(status) {
-        this.duplex.send('popup', 'changeDealCurrencyPage', status, false);
-    },
-
-    setAirdropInfo(airdropInfo) {
-        this.duplex.send('popup', 'setAirdropInfo', airdropInfo, false);
-    },
-
-    setDappList(dappList) {
-        this.duplex.send('popup', 'setDappList',dappList ,false);
-    },
 
     setAuthorizeDapps(dappList) {
         this.duplex.send('popup', 'setAuthorizeDapps',dappList ,false);
     },
 
-    setLedgerImportAddress(address) {
-        this.duplex.send('popup', 'setLedgerImportAddress',address ,false);
-    },
-
     setVTokenList(vTokenList) {
         this.duplex.send('popup', 'setVTokenList',vTokenList ,false);
+    },
+
+    setResource(resource) {
+        this.duplex.send('popup', 'setResource',resource ,false);
+    },
+
+    setNodes(nodes) {
+        this.duplex.send('popup', 'setNodes',nodes ,false);
     }
 
 };

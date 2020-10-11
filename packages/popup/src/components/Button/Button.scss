@@ -13,10 +13,6 @@
         font-size: 16px;
     }
 
-    &.is-invalid {
-        opacity: 0.4;
-    }
-
     &.is-valid {
         cursor: pointer;
     }
@@ -38,12 +34,11 @@
     }
 
     &.primary {
-        background: #636ACC;
-
+        background: #F7861C;
         &.is-valid:not(.is-loading):hover {
             //background: #454c67;
         }
-    
+
         &.is-valid:not(.is-loading):focus {
             //background: #474d64;
         }
@@ -75,7 +70,7 @@
 
     &.white {
         background: #FFFFFF;
-        
+
         span {
             color: #000000;
         }
@@ -87,5 +82,10 @@
         &.is-valid:not(.is-loading):focus {
             box-shadow: 0 1px 8px 0 #00000030;
         }
+    }
+
+    &.is-invalid {
+        opacity: 0.4;
+        background: #C2C8D5;
     }
 }

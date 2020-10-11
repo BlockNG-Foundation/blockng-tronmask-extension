@@ -15,6 +15,7 @@
 
     .addressList {
         margin-bottom: 20px;
+        max-height: 400px;
         .addressOption {
             height: 78px;
             padding:14px;
@@ -36,7 +37,7 @@
                 border:1px solid #C2C8D5;
                 box-sizing: content-box;
                 &.isSelected {
-                    background-image: url('../../../../assets/images/new/icon-selected.svg');
+                    background-image: url('../../../../assets/icon/icon-selected.svg');
                     border-color:#636acc;
                 }
             }
@@ -59,7 +60,7 @@
                     }
                 }
             }
-            
+
 
             &:not(.isLoading) {
                 cursor: pointer;

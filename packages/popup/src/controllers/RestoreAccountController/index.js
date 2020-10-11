@@ -1,8 +1,8 @@
 import React from 'react';
 import AccountName from 'components/AccountName';
 
-import { PopupAPI } from '@tronlink/lib/api';
-import { RESTORATION_STAGE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@tronmask/lib/api';
+import { RESTORATION_STAGE } from '@tronmask/lib/constants';
 
 import ChoosingType from './stages/ChoosingType';
 import MnemonicImport from './stages/MnemonicImport';
@@ -78,7 +78,7 @@ class RestoreAccountController extends React.Component {
                         name={ walletName }
                         onCancel={ () => this.changeStage(RESTORATION_STAGE.CHOOSING_TYPE) }
                     />
-                );    
+                );
             default:
                 return null;
         }

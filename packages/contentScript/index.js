@@ -1,6 +1,6 @@
-import MessageDuplex from '@tronlink/lib/MessageDuplex';
-import EventChannel from '@tronlink/lib/EventChannel';
-import Logger from '@tronlink/lib/logger';
+import MessageDuplex from '@tronmask/lib/MessageDuplex';
+import EventChannel from '@tronmask/lib/EventChannel';
+import Logger from '@tronmask/lib/logger';
 import extensionizer from 'extensionizer';
 
 const logger = new Logger('contentScript');
@@ -10,7 +10,7 @@ const contentScript = {
     eventChannel: new EventChannel('contentScript'),
 
     init() {
-        logger.info('Initialising TronLink');
+        logger.info('Initialising TronMask');
 
         this.registerListeners();
         this.inject();
@@ -47,7 +47,7 @@ const contentScript = {
             injectionSite.children[ 0 ]
         );
 
-        logger.info('TronLink injected');
+        logger.info('TronMask injected');
     }
 };
 

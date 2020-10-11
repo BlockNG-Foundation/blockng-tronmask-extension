@@ -17,9 +17,12 @@
     "ExchangeWithdrawContract": "wallet/exchangewithdraw",
     "UpdateSettingContract": "wallet/updatesetting",
     "ExchangeInjectContract": "wallet/exchangeinject",
-    "ProposalApproveContact": "wallet/proposalapprove",
+    "ProposalApproveContract": "wallet/proposalapprove",
     "ProposalDeleteContract": "wallet/proposaldelete",
+    "ProposalCreateContract": "wallet/proposalcreate",
     "UnfreezeAssetContract": "wallet/unfreezeasset",
     "AccountUpdateContract": "wallet/updateaccount",
-    "WitnessUpdateContract": "wallet/updatewitness"
+    "WitnessUpdateContract": "wallet/updatewitness",
+    "AccountPermissionUpdateContract": "wallet/accountpermissionupdate",
+    "UpdateBrokerageContract": "wallet/updateBrokerage"
 }

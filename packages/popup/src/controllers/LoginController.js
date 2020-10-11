@@ -1,10 +1,10 @@
 import React from 'react';
-import Input from '@tronlink/popup/src/components/Input';
-import Button from '@tronlink/popup/src/components/Button';
+import Input from '@tronmask/popup/src/components/Input';
+import Button from '@tronmask/popup/src/components/Button';
 
 import { FormattedMessage } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { app } from '@tronlink/popup/src/index';
+import { PopupAPI } from '@tronmask/lib/api';
+import { app } from '@tronmask/popup/src/index';
 
 class LoginController extends React.Component {
     state = {
@@ -62,7 +62,7 @@ class LoginController extends React.Component {
                 <div className='pageHeader'>
                     <div className='pageHeaderLogoWrap'>
                         <div className='logo1'></div>
-                        <div className='logo2'></div>
+                        {/*<div className='logo2'></div>*/}
                     </div>
                     <div className='pageHeaderText'>
                         <FormattedMessage id='LOGIN.PASSWORD.BACK' />
@@ -85,7 +85,7 @@ class LoginController extends React.Component {
                         onEnter={ this.onButtonClick }
                         tabIndex={ 1 }
                     />
-            
+
                     <Button
                         id='BUTTON.CONTINUE'
                         isValid={ password.isValid }

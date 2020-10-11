@@ -1,23 +1,17 @@
-import Logger from '@tronlink/lib/logger';
-import MessageDuplex from '@tronlink/lib/MessageDuplex';
+import Logger from '@tronmask/lib/logger';
+import MessageDuplex from '@tronmask/lib/MessageDuplex';
 import NodeService from './services/NodeService';
 import StorageService from './services/StorageService';
 import WalletService from './services/WalletService';
-import Utils from '@tronlink/lib/utils';
-import transactionBuilder from '@tronlink/lib/transactionBuilder';
+import Utils from '@tronmask/lib/utils';
+import transactionBuilder from '@tronmask/lib/transactionBuilder';
 import TronWeb from 'tronweb';
+import { get as lodashGet } from 'lodash';
 
-import * as Sentry from '@sentry/browser';
 
-import { CONFIRMATION_TYPE } from '@tronlink/lib/constants';
-import { BackgroundAPI } from '@tronlink/lib/api';
-import { version } from './package.json';
+import { CONFIRMATION_TYPE } from '@tronmask/lib/constants';
+import { BackgroundAPI } from '@tronmask/lib/api';
 
-// Make error reporting user-configurable
-Sentry.init({
-    dsn: 'http://d29e163582a948cd8addab042f4c65c7@18.220.1.137:9000/6',
-    release: `TronLink@${ version }`
-});
 
 const duplex = new MessageDuplex.Host();
 const logger = new Logger('backgroundScript');
@@ -27,44 +21,14 @@ const backgroundScript = {
         new WalletService()
     ),
 
-    developmentMode: location.hostname !== 'ibnejdfjmmkpcnlpebklmnkoeoihofec',
     nodeService: Utils.requestHandler(NodeService),
 
     run() {
         BackgroundAPI.init(duplex);
 
-        this.bindAnalytics();
         this.bindPopupDuplex();
         this.bindTabDuplex();
         this.bindWalletEvents();
-    },
-
-    bindAnalytics() {
-        (function(i, s, o, g, r, a, m) {
-            i.GoogleAnalyticsObject = r;
-
-            i[ r ] = i[ r ] || function() {
-                (i[ r ].q = i[ r ].q || []).push(arguments);
-            }, i[ r ].l = 1 * new Date();
-
-            a = s.createElement(o),
-            m = s.getElementsByTagName(o)[ 0 ];
-
-            a.async = 1;
-            a.src = g;
-
-            m.parentNode.insertBefore(a, m);
-        })(window, document, 'script', (this.developmentMode ?
-            //'https://www.google-analytics.com/analytics_debug.js' :
-            'https://www.google-analytics.com/analytics.js' :
-            'https://www.google-analytics.com/analytics.js'
-        ), 'ga');
-
-        ga('create', 'UA-126129673-2', 'auto');
-        ga('send', 'pageview');
-        ga('set', 'checkProtocolTask', null);
-        ga('set', 'appName', 'TronLink');
-        ga('set', 'appVersion', version);
     },
 
     bindPopupDuplex() {
@@ -97,7 +61,6 @@ const backgroundScript = {
         duplex.on('sendTrx', this.walletService.sendTrx);
         duplex.on('sendBasicToken', this.walletService.sendBasicToken);
         duplex.on('sendSmartToken', this.walletService.sendSmartToken);
-        duplex.on('getPrices', this.walletService.getPrices);
 
         // WalletService: Account management / migration
         duplex.on('addAccount', this.walletService.addAccount);
@@ -106,11 +69,10 @@ const backgroundScript = {
         duplex.on('getAccounts', this.walletService.getAccounts);
         duplex.on('importAccount', this.walletService.importAccount);
         duplex.on('getSelectedAccount', this.walletService.getSelectedAccount);
-        duplex.on('addSmartToken', this.walletService.addSmartToken);
         duplex.on('getConfirmations', this.walletService.getConfirmations);
-        duplex.on('selectCurrency', this.walletService.selectCurrency);
         duplex.on('deleteAccount', this.walletService.deleteAccount);
         duplex.on('exportAccount', this.walletService.exportAccount);
+        duplex.on('updateAccountName', this.walletService.updateAccountName);
 
         // WalletService: State management
         duplex.on('changeState', this.walletService.changeState);
@@ -139,45 +101,17 @@ const backgroundScript = {
         duplex.on('getSetting', this.walletService.getSetting);
         duplex.on('setSetting', this.walletService.setSetting);
 
-        duplex.on('getTransactionsByTokenId', this.walletService.getTransactionsByTokenId);
-
-        // tronBank energy
-        duplex.on('rentEnergy', this.walletService.rentEnergy);
-        duplex.on('isValidOverTotal', this.walletService.isValidOverTotal);
-        duplex.on('getBankDefaultData', this.walletService.getBankDefaultData);
-        duplex.on('calculateRentCost', this.walletService.calculateRentCost);
-        duplex.on('isValidOrderAddress', this.walletService.isValidOrderAddress);
-        duplex.on('isValidOnlineAddress', this.walletService.isValidOnlineAddress);
-        duplex.on('getBankRecordList', this.walletService.getBankRecordList);
-        duplex.on('getBankRecordDetail', this.walletService.getBankRecordDetail);
-        duplex.on('setSelectedBankRecordId', this.walletService.setSelectedBankRecordId);
-        duplex.on('changeDealCurrencyPage', this.walletService.changeDealCurrencyPage);
-        duplex.on('bankOrderNotice', this.walletService.bankOrderNotice);
-
-        duplex.on('getNews', this.walletService.getNews);
-        duplex.on('getIeos', this.walletService.getIeos);
-        duplex.on('addCount', this.walletService.addCount);
-
-        duplex.on('setAirdropInfo', this.walletService.setAirdropInfo);
-        duplex.on('getDappList', this.walletService.getDappList);
-        duplex.on('setDappList', this.walletService.setDappList);
         duplex.on('getAccountInfo', this.walletService.getAccountInfo);
 
-        duplex.on('setGaEvent', this.walletService.setGaEvent);
-        duplex.on('getAllDapps', this.walletService.getAllDapps);
         duplex.on('updateTokens', this.walletService.updateTokens);
         duplex.on('getAllTokens', this.walletService.getAllTokens);
-        duplex.on('setTransactionDetail', this.walletService.setTransactionDetail);
+
         duplex.on('setAuthorizeDapps', this.walletService.setAuthorizeDapps);
         duplex.on('getAuthorizeDapps', this.walletService.getAuthorizeDapps);
 
-        duplex.on('setLedgerImportAddress', this.walletService.setLedgerImportAddress);
-        duplex.on('getLedgerImportAddress', this.walletService.getLedgerImportAddress);
 
         duplex.on('getAbiCode', this.walletService.getAbiCode);
         duplex.on('getVTokenList', this.walletService.getVTokenList);
-        //duplex.on('setVTokenList', this.walletService.setVTokenList);
-        duplex.on('setPushMessage', this.walletService.setPushMessage);
 
         // WalletService:deposit, withdraw
         duplex.on('depositTrx', this.walletService.depositTrx);
@@ -189,14 +123,21 @@ const backgroundScript = {
         duplex.on('depositTrc20', this.walletService.depositTrc20);
         duplex.on('withdrawTrc20', this.walletService.withdrawTrc20);
 
+        //tokens
+        duplex.on('getTokenById', this.walletService.getTokenById);
+
+        //transaction
+        duplex.on('getTransactionDetail', this.walletService.getTransactionDetail);
+        // system
+        duplex.on('getWalletPassword', this.walletService.getWalletPassword);
+        duplex.on('authPassword', this.walletService.authPassword);
     },
 
     bindTabDuplex() {
         duplex.on('tabRequest', async ({ hostname, resolve, data: { action, data, uuid } }) => {
             // Abstract this so we can just do resolve(data) or reject(data)
             // and it will map to { success, data, uuid }
-
-            switch(action) {
+            switch (action) {
                 case 'init': {
                     const response = {
                         address: false,
@@ -205,20 +146,27 @@ const backgroundScript = {
                             solidityNode: false,
                             eventServer: false
                         },
-                        name:false,
-                        type:false
+                        connectNode: false,
+                        name: false,
+                        type: false
                     };
-
-                    if(StorageService.ready) {
+                    if (StorageService.ready) {
                         const node = NodeService.getCurrentNode();
-                        const { address, name, type } = this.walletService.accounts[this.walletService.selectedAccount];
                         const { phishingList } = this.walletService;
-                        response.address = address;
                         response.node = {
-                            fullNode: node.fullNode,
-                            solidityNode: node.solidityNode,
-                            eventServer: node.eventServer
+                            ...node
                         };
+                        if (node.connect) {
+                            const nodes = NodeService.getNodes();
+                            const connectNode = nodes.nodes[node.connect];
+                            response.connectNode = { ...connectNode };
+                        }
+                        const { address, name, type } = this.walletService.accounts[this.walletService.selectedAccount] ? this.walletService.accounts[this.walletService.selectedAccount] : {
+                            address: false,
+                            name: false,
+                            type: false
+                        };
+                        response.address = address;
                         response.name = name;
                         response.type = type;
                         response.phishingList = phishingList;
@@ -231,8 +179,9 @@ const backgroundScript = {
                     });
 
                     break;
-                } case 'sign': {
-                    if(!this.walletService.selectedAccount) {
+                }
+                case 'sign': {
+                    if (!this.walletService.selectedAccount) {
                         return resolve({
                             success: false,
                             data: 'User has not unlocked wallet',
@@ -245,19 +194,26 @@ const backgroundScript = {
                             transaction,
                             input
                         } = data;
+                        // Judgment Visible.
 
                         const {
                             selectedAccount
                         } = this.walletService;
 
-                        const tronWeb = NodeService.tronWeb;
+                        let tronWeb = NodeService.tronWeb;
+                        let chainType = 0;
+                        if (!!transaction && data.input.chainType == 1) {
+                            chainType = data.input.chainType;
+                            // tronWeb = NodeService.sunWeb.sidechain;
+                        }
                         const account = this.walletService.getAccount(selectedAccount);
-                        const appWhitelist = this.walletService.appWhitelist.hasOwnProperty(hostname)?this.walletService.appWhitelist[ hostname ]:{};
+                        const appWhitelist = this.walletService.appWhitelist.hasOwnProperty(hostname) ? this.walletService.appWhitelist[hostname] : {};
+                        const accountType = lodashGet(account, 'type');
 
-                        if(typeof input === 'string') {
+                        if (typeof input === 'string') {
                             const { duration = 0 } = appWhitelist;
-                            const signedTransaction = await account.sign(input);
-                            if(appWhitelist && (duration === -1 || duration >= Date.now())){
+                            const signedTransaction = !!data.multiSign ? await account.multiSign(transaction, Number(chainType) === 1 ? NodeService.sunWeb.sidechain : NodeService.sunWeb.mainchain, data.permissionId) : await account.sign(input);
+                            if (accountType !== 2 && appWhitelist && (duration === -1 || duration >= Date.now())) {
                                 logger.info('Automatically signing transaction', signedTransaction);
                                 return resolve({
                                     success: true,
@@ -265,6 +221,17 @@ const backgroundScript = {
                                     uuid
                                 });
                             }
+
+                            const authorizeDapps = this.walletService.getAuthorizeDapps();
+                            if (accountType !== 2 && authorizeDapps.hasOwnProperty(hostname)) {
+                                logger.info('Automatically signing transaction', signedTransaction);
+                                return resolve({
+                                    success: true,
+                                    data: signedTransaction,
+                                    uuid
+                                });
+                            }
+
                             return this.walletService.queueConfirmation({
                                 type: CONFIRMATION_TYPE.STRING,
                                 hostname,
@@ -273,59 +240,53 @@ const backgroundScript = {
                             }, uuid, resolve);
                         }
 
-                        const contractType = transaction.raw_data.contract[ 0 ].type;
+                        let visible = lodashGet(transaction, 'visible');
+                        if (Object.prototype.toString.call(visible).slice(8, -1) === 'String') {
+                            visible = visible === 'true';
+                        }
+                        input.visible = !!visible;
+
+                        const contractType = transaction.raw_data.contract[0].type;
                         const contractAddress = TronWeb.address.fromHex(input.contract_address);
                         const {
                             mapped,
                             error
-                        } = await transactionBuilder(tronWeb, contractType, input); // NodeService.getCurrentNode()
-
-                        if(error) {
+                        } = !!data.multiSign && data.permissionId != undefined ? {
+                            mapped: transaction,
+                            error: null
+                        } : await transactionBuilder(Number(chainType) === 1 ? NodeService.sunWeb.sidechain : NodeService.sunWeb.mainchain, contractType, input); // NodeService.getCurrentNode()
+                        if (error) {
                             return resolve({
                                 success: false,
                                 data: 'Invalid transaction provided',
                                 uuid
                             });
                         }
-
-                        const signedTransaction = await account.sign(
-                            mapped.transaction || mapped,
-                            NodeService._selectedChain === '_' ? NodeService.sunWeb.mainchain : NodeService.sunWeb.sidechain
-                        );
-
-                        const whitelist = this.walletService.contractWhitelist[ input.contract_address ];
-
-
-                        if(contractType === 'TriggerSmartContract') {
-                            const value = input.call_value || 0;
-
-                            ga('send', 'event', {
-                                eventCategory: 'Smart Contract',
-                                eventAction: 'Used Smart Contract',
-                                eventLabel: contractAddress,
-                                eventValue: value,
-                                referrer: hostname,
-                                userId: Utils.hash(input.owner_address)
-                            });
+                        let signedTransaction = {};
+                        if (!!data.multiSign && data.permissionId != undefined) {
+                            signedTransaction = await account.multiSign(
+                                mapped.transaction || mapped,
+                                Number(chainType) === 1 ? NodeService.sunWeb.sidechain : NodeService.sunWeb.mainchain,
+                                data.permissionId
+                            );
+                        } else {
+                            let unSignedTransaction = mapped.transaction || mapped;
+                            console.log('unSignedTransaction', mapped.transaction, mapped);
+                            if (['TransferContract', 'TriggerSmartContract', 'TransferAssetContract'].indexOf(contractType) != -1 && transaction.raw_data.data) {
+                                unSignedTransaction = await tronWeb.transactionBuilder.addUpdateData(unSignedTransaction, tronWeb.toUtf8(transaction.raw_data.data), 'utf8');
+                            }
+                            signedTransaction = await account.sign(
+                                unSignedTransaction,
+                                Number(chainType) === 1 ? NodeService.sunWeb.sidechain : NodeService.sunWeb.mainchain
+                            );
                         }
 
-                        // if(contractType !== 'TriggerSmartContract' && appWhitelist) {
-                        //     const { duration = 0 } = appWhitelist;
-                        //     if(duration === -1 || duration >= Date.now()) {
-                        //         logger.info('Automatically signing transaction', signedTransaction);
-                        //
-                        //         return resolve({
-                        //             success: true,
-                        //             data: signedTransaction,
-                        //             uuid
-                        //         });
-                        //     }
-                        // }
+                        //Data statistics
+                        const value = input.call_value || 0;
 
-                        if(contractType === 'TriggerSmartContract' && whitelist) {
-                            const expiration = whitelist[ hostname ];
-
-                            if(expiration === -1 || expiration >= Date.now()) {
+                        if (contractType === 'TriggerSmartContract' && accountType !== 2 && appWhitelist) {
+                            const { duration = 0 } = appWhitelist;
+                            if (duration === -1 || duration >= Date.now()) {
                                 logger.info('Automatically signing transaction', signedTransaction);
 
                                 return resolve({
@@ -337,7 +298,7 @@ const backgroundScript = {
                         }
 
                         const authorizeDapps = this.walletService.getAuthorizeDapps();
-                        if( contractType === 'TriggerSmartContract' && authorizeDapps.hasOwnProperty(contractAddress)){
+                        if (contractType === 'TriggerSmartContract' && accountType !== 2 && authorizeDapps.hasOwnProperty(hostname)) {
                             logger.info('Automatically signing transaction', signedTransaction);
 
                             return resolve({
@@ -348,13 +309,14 @@ const backgroundScript = {
                         }
 
                         this.walletService.queueConfirmation({
+                            chainType,
                             type: CONFIRMATION_TYPE.TRANSACTION,
                             hostname,
                             signedTransaction,
                             contractType,
                             input
                         }, uuid, resolve);
-                    } catch(ex) {
+                    } catch (ex) {
                         logger.error('Failed to sign transaction:', ex);
 
                         return resolve({
@@ -364,21 +326,22 @@ const backgroundScript = {
                         });
                     }
                     break;
-                } case 'setVisited': {
-                    const { href = ''} = data;
-                    const phishingList =  this.walletService.phishingList;
-                    if(href){
-                        this.walletService.phishingList = phishingList.map(({url,isVisit})=>{
-                           const reg = new RegExp(url);
-                           if(href.match(reg)){
-                               isVisit = true;
-                           }
-                           return {url,isVisit};
+                }
+                case 'setVisited': {
+                    const { href = '' } = data;
+                    const phishingList = this.walletService.phishingList;
+                    if (href) {
+                        this.walletService.phishingList = phishingList.map(({ url, isVisit }) => {
+                            const reg = new RegExp(url);
+                            if (href.match(reg)) {
+                                isVisit = true;
+                            }
+                            return { url, isVisit };
                         });
-                    }else{
-                        this.walletService.phishingList = phishingList.map(({url,isVisit})=>{
+                    } else {
+                        this.walletService.phishingList = phishingList.map(({ url, isVisit }) => {
                             isVisit = false;
-                            return {url,isVisit};
+                            return { url, isVisit };
                         });
                     }
                     resolve({
@@ -387,7 +350,8 @@ const backgroundScript = {
                         uuid
                     });
                     break;
-                } default:
+                }
+                default:
                     resolve({
                         success: false,
                         data: 'Unknown method called',
@@ -410,7 +374,6 @@ const backgroundScript = {
         this.walletService.on('setNode', node => (
             BackgroundAPI.setNode(node)
         ));
-
 
         this.walletService.on('setChain', chain => (
             BackgroundAPI.setChain(chain)
@@ -444,34 +407,21 @@ const backgroundScript = {
             BackgroundAPI.setSetting(setting)
         ));
 
-        this.walletService.on('setSelectedBankRecordId', id => (
-            BackgroundAPI.setSelectedBankRecordId(id)
-        ));
-
-        this.walletService.on('changeDealCurrencyPage', status => (
-            BackgroundAPI.changeDealCurrencyPage(status)
-        ));
-
-        this.walletService.on('setAirdropInfo', airdropInfo => (
-            BackgroundAPI.setAirdropInfo(airdropInfo)
-        ));
-
-        this.walletService.on('setDappList', dappList => (
-            BackgroundAPI.setDappList(dappList)
-        ));
-
         this.walletService.on('setAuthorizeDapps', authorizeDapps => (
             BackgroundAPI.setAuthorizeDapps(authorizeDapps)
-        ));
-
-        this.walletService.on('setLedgerImportAddress', address => (
-            BackgroundAPI.setLedgerImportAddress(address)
         ));
 
         this.walletService.on('setVTokenList', vTokenList => (
             BackgroundAPI.setVTokenList(vTokenList)
         ));
 
+        this.walletService.on('setResource', resource => (
+            BackgroundAPI.setResource(resource)
+        ));
+
+        this.walletService.on('setNodes', nodes => (
+            BackgroundAPI.setNodes(nodes)
+        ));
     }
 };
 

@@ -1,6 +1,6 @@
-# TronLink  
+# TronMask  
 
-TronLink is firstly launched at TRON’s official website and backed by TRON foundation, TronLink is the TRON wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for TRON.   
+TronMask is firstly launched at TRON’s official website and backed by TRON foundation, TronMask is the TRON wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for TRON.   
 
 Main functions:    
 
@@ -45,6 +45,6 @@ $ yarn lint
 ```
 
 ## Links
-+ [Website](https://www.tronlink.org/)
-+ [Support](https://t.me/tronlink)
++ [Website](https://www.tronmask.org/)
++ [Support](https://t.me/tronmask)
 + [Twitter](https://twitter.com/TronLinkWallet)

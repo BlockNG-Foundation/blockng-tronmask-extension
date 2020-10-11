@@ -1,10 +1,10 @@
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
+import Button from '@tronmask/popup/src/components/Button';
 import TronWeb from 'tronweb';
 
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
+import { PopupAPI } from '@tronmask/lib/api';
 
 import './PrivateKeyImport.scss';
 

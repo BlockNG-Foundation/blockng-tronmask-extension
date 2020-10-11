@@ -1,8 +1,8 @@
 import extensionizer from 'extensionizer';
-import Logger from '@tronlink/lib/logger';
-import Utils from '@tronlink/lib/utils';
+import Logger from '@tronmask/lib/logger';
+import Utils from '@tronmask/lib/utils';
 import NodeService from '../NodeService';
-import axios from 'axios';
+import { get as lodashGet } from 'lodash';
 const logger = new Logger('StorageService');
 
 const StorageService = {
@@ -12,13 +12,9 @@ const StorageService = {
         'nodes',
         'transactions',
         'selectedAccount',
-        'prices',
-        'pendingTransactions',
         'tokenCache',
         'setting',
         'language',
-        'dappList',
-        'allDapps',
         'allTokens',
         'authorizeDapps',
         'vTokenList',
@@ -26,26 +22,6 @@ const StorageService = {
     ],
 
     storage: extensionizer.storage.local,
-
-    prices: {
-        priceList: {
-            CNY: 0,
-            USD: 0,
-            GBP: 0,
-            EUR: 0,
-            BTC: 0,
-            ETH: 0
-        },
-        usdtPriceList: {
-            CNY: 0,
-            USD: 0,
-            GBP: 0,
-            EUR: 0,
-            BTC: 0,
-            ETH: 0
-        },
-        selected: 'USD'
-    },
     nodes: {
         nodeList: {},
         selectedNode: false
@@ -54,7 +30,6 @@ const StorageService = {
         chainList:{},
         selectedChain: false
     },
-    pendingTransactions: {},
     accounts: {},
     transactions: {},
     tokenCache: {},
@@ -73,11 +48,6 @@ const StorageService = {
     language: '',
     ready: false,
     password: false,
-    dappList: {
-        recommend: [],
-        used: []
-    },
-    allDapps: [],
     allTokens : {
         mainchain: [],
         sidechain: []
@@ -85,6 +55,7 @@ const StorageService = {
     allSideTokens : [],
     authorizeDapps: {},
     vTokenList: [],
+
     get needsMigrating() {
         return localStorage.hasOwnProperty('TronLink_WALLET');
     },
@@ -162,9 +133,10 @@ const StorageService = {
     getAccounts() {
         const accounts = {};
 
+        const selected = NodeService.getNodes().selected;
         Object.keys(this.accounts).forEach(address => {
             accounts[ address ] = {
-                transactions: this.transactions[ address ] || [],
+                transactions: lodashGet(this.transactions, `${address}.${selected}`) || [],
                 ...this.accounts[ address ]
             };
         });
@@ -174,7 +146,8 @@ const StorageService = {
 
     getAccount(address) {
         const account = this.accounts[ address ];
-        const transactions = this.transactions[ address ] || [];
+        const selected = NodeService.getNodes().selected;
+        const transactions = lodashGet(this.transactions, `${address}.${selected}`) || [];
 
         return {
             transactions,
@@ -234,7 +207,10 @@ const StorageService = {
             ...remaining // eslint-disable-line
         } = account;
 
-        this.transactions[ account.address ] = transactions;
+        const selected = NodeService.getNodes().selected;
+        this.transactions[account.address] = this.transactions[account.address] || {};
+        this.transactions[account.address][selected] = transactions;
+
         this.accounts[ account.address ] = remaining;
 
         this.save('transactions', 'accounts');
@@ -304,64 +280,6 @@ const StorageService = {
         logger.info('Set storage password');
     },
 
-    addPendingTransaction(address, txID) {
-        if(!(address in this.pendingTransactions))
-            this.pendingTransactions[ address ] = [];
-
-        if(this.pendingTransactions[ address ].some(tx => tx.txID === txID))
-            return;
-
-        logger.info('Adding pending transaction:', { address, txID });
-
-        this.pendingTransactions[ address ].push({
-            nextCheck: Date.now() + 5000,
-            txID
-        });
-
-        this.save('pendingTransactions');
-    },
-
-    removePendingTransaction(address, txID) {
-        if(!(address in this.pendingTransactions))
-            return;
-
-        logger.info('Removing pending transaction:', { address, txID });
-
-        this.pendingTransactions[ address ] = this.pendingTransactions[ address ].filter(transaction => (
-            transaction.txID !== txID
-        ));
-
-        if(!this.pendingTransactions[ address ].length)
-            delete this.pendingTransactions[ address ];
-
-        this.save('pendingTransactions');
-    },
-
-    getNextPendingTransaction(address) {
-        if(!(address in this.pendingTransactions))
-            return false;
-
-        const [ transaction ] = this.pendingTransactions[ address ];
-
-        if(!transaction)
-            return false;
-
-        if(transaction.nextCheck < Date.now())
-            return false;
-
-        return transaction.txID;
-    },
-
-    setPrices(priceList,usdtPriceList) {
-        this.prices.priceList = priceList;
-        this.prices.usdtPriceList = usdtPriceList;
-        this.save('prices');
-    },
-
-    selectCurrency(currency) {
-        this.prices.selected = currency;
-        this.save('prices');
-    },
 
     save(...keys) {
         if(!this.ready)
@@ -395,7 +313,7 @@ const StorageService = {
             name,
             abbr,
             precision: decimals = 0
-        } = await NodeService.tronWeb.trx.getTokenFromID(tokenID);
+        } = NodeService._selectedChain === '_' ? await NodeService.tronWeb.trx.getTokenFromID(tokenID) : await NodeService.sunWeb.sidechain.trx.getTokenFromID(tokenID);
         this.tokenCache[ tokenID ] = {
             name,
             abbr,
@@ -406,32 +324,6 @@ const StorageService = {
         logger.info(`Cached token ${ tokenID }:`, this.tokenCache[ tokenID ]);
 
         this.save('tokenCache');
-    },
-
-    async getDappList(isFromStorage) {
-        if(!this.hasOwnProperty('dappList')) {
-            this.dappList = { recommend: [], used: [] };
-        }
-        if(!isFromStorage) {
-            const { data: { data: recommend } } = await axios.get('https://list.tronlink.org/dapphouseapp/plug').catch(e => {
-                logger.error('Get dapp recommend list fail',e);
-                return { data: { data: this.dappList.recommend } };
-            });
-            this.dappList.recommend = recommend;
-        }
-        const used = this.dappList.used.filter(v => v != null);
-        this.dappList.used = used;
-        return this.dappList;
-    },
-
-    saveDappList(dappList) {
-        this.dappList = dappList;
-        this.save('dappList');
-    },
-
-    saveAllDapps(dapps) {
-        this.allDapps = dapps;
-        this.save('allDapps');
     },
 
     saveAllTokens(tokens,tokens2) {
@@ -451,14 +343,18 @@ const StorageService = {
     },
 
     purge() {
-        logger.warn('Purging TronLink. This will remove all stored transaction data');
+        logger.warn('Purging TronMask. This will remove all stored transaction data');
 
         this.storage.set({
             transactions: Utils.encrypt({}, this.password)
         });
 
-        logger.info('Purge complete. Please reload TronLink');
-    }
+        logger.info('Purge complete. Please reload TronMask');
+    },
+
+    getWalletPassword() {
+        return this.password;
+    },
 };
 
 export default StorageService;

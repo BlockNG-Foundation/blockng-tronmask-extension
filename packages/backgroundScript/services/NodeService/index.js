@@ -2,70 +2,145 @@ import StorageService from '../StorageService';
 import randomUUID from 'uuid/v4';
 import TronWeb from 'tronweb';
 import SunWeb from 'sunweb';
-import Logger from '@tronlink/lib/logger';
-import { CONTRACT_ADDRESS,SIDE_CHAIN_ID,NODE } from '@tronlink/lib/constants';
+import Logger from '@tronmask/lib/logger';
+import { CONTRACT_ADDRESS, SIDE_CHAIN_ID, NODE, SIDE_CHAIN_ID_TEST,  SIDE_CHAIN_ID_TEST_NILE, REFER_ABI} from '@tronmask/lib/constants';
 import { BigNumber } from 'bignumber.js';
 
 const logger = new Logger('NodeService');
 
 const NodeService = {
-    _chains:{
-        '_':{
-            name:'TRON',
-            default:true
+    _chains: {
+        '_': {
+            name: 'MainChain',
+            default: true
         },
-        [ SIDE_CHAIN_ID ]:{
-            name:'DAppChain',
-            default:false
+        [SIDE_CHAIN_ID]: {
+            name: 'DAppChain',
+            default: false
         }
     },
     _nodes: {
-            // 'f0b1e38e-7bee-485e-9d3f-69410bf30682': {
-            //     name: 'Mainnet Testnet',
-            //     fullNode: 'http://47.252.84.158:8070',
-            //     solidityNode: 'http://47.252.84.158:8071',
-            //     eventServer: 'http://47.252.81.14:8070',
-            //     default: true, // false
-            //     chain:'_',
-            //     connect: SIDE_CHAIN_ID
-            // },
-            'f0b1e38e-7bee-485e-9d3f-69410bf30681': {
-                name: 'Mainnet',
-                fullNode: 'https://api.trongrid.io',
-                solidityNode: 'https://api.trongrid.io',
-                eventServer: 'https://api.trongrid.io',
-                default: true, // false
-                chain:'_' ,
-                connect: SIDE_CHAIN_ID
-            },
-            '6739be94-ee43-46af-9a62-690cf0947269': {
-                name: 'Shasta Testnet',
-                fullNode: 'https://api.shasta.trongrid.io',
-                solidityNode: 'https://api.shasta.trongrid.io',
-                eventServer: 'https://api.shasta.trongrid.io',
-                default: false,
-                chain:'_'
-            },
-            // 'a981e232-a995-4c81-9653-c85e4d05f598':{
-            //     name: 'SideChain Testnet',
-            //     fullNode: 'http://47.252.85.90:8070',
-            //     solidityNode: 'http://47.252.85.90:8071',
-            //     eventServer: 'http://47.252.87.129:8070',
-            //     default: true,
-            //     chain:SIDE_CHAIN_ID
-            // },
-            'a981e232-a995-4c81-9653-c85e4d05f599':{
-                name: 'DappChain',
+        '109c64ad-e59c-46fe-ba87-179587e6c772': {
+            name: 'Mainnet (trongrid)',
+            fullNode: 'https://api.trongrid.io',
+            solidityNode: 'https://api.trongrid.io',
+            eventServer: 'https://api.trongrid.io',
+            default: true, // false
+            chain: '_',
+            connect: '51a36e5a-2480-4b57-989c-539345a13be2',
+            chainType: 0,  // 0: Tron, 1: DappChain
+            netType: 0,
+            connectChain: {
                 fullNode: 'https://sun.tronex.io',
                 solidityNode: 'https://sun.tronex.io',
                 eventServer: 'https://sun.tronex.io',
-                default: true,
-                chain: SIDE_CHAIN_ID
+                mainGateway: CONTRACT_ADDRESS.MAIN,
+                sideGateway: CONTRACT_ADDRESS.SIDE,
+                chainId: SIDE_CHAIN_ID,
             },
+            hostname: 'https://tronscan.io/#'
+        },
+        '8eeb5be6-5e10-4283-ae61-03c0e4726fe0': {
+            name: 'Mainnet (tronstack)',
+            fullNode: 'https://api.tronstack.io',
+            solidityNode: 'https://api.tronstack.io',
+            eventServer: 'https://api.tronstack.io',
+            default: false,
+            chain: '_',
+            // connect: '51a36e5a-2480-4b57-989c-539345a13be2',
+            chainType: 0,  // 0: Tron, 1: DappChain
+            netType: 0,   // 0: mainnet, 1: testnet
+            connectChain: false,
+            hostname: 'https://tronscan.io/#'
+        },
+        'b9424719-b45b-45aa-95d0-1b1b25fc75ae': {
+            name: 'Shasta Testnet',
+            fullNode: 'https://api.shasta.trongrid.io',
+            solidityNode: 'https://api.shasta.trongrid.io',
+            eventServer: 'https://api.shasta.trongrid.io',
+            default: false,
+            chain: '_',
+            chainType: 0,
+            netType: 1,
+            connectChain: false,
+            hostname: 'https://shasta.tronscan.org/#'
+        },
+        'f14212e2-a6a0-4391-9419-07b55f8be63e': {
+            name: 'Tronex Testnet',
+            fullNode: 'https://testhttpapi.tronex.io',
+            solidityNode: 'https://testhttpapi.tronex.io',
+            eventServer: 'https://testapi.tronex.io',
+            default: false,
+            chain: '_',
+            connect: '01eda3a0-5a58-4e44-9f95-f7f1f59dd728',
+            chainType: 0,
+            netType: 1,
+            connectChain: {
+                fullNode: 'https://suntest.tronex.io',
+                solidityNode: 'https://suntest.tronex.io',
+                eventServer: 'https://suntest.tronex.io',
+                mainGateway: CONTRACT_ADDRESS.MAIN_TEST,
+                sideGateway: CONTRACT_ADDRESS.SIDE_TEST,
+                chainId: SIDE_CHAIN_ID_TEST,
+            },
+            hostname: 'https://tronscan.io/#'
+        },
+        '910d7fa5-da35-419d-b454-fd4ee22087cd': {
+            name: 'Nile Testnet',
+            fullNode: 'https://api.nileex.io',
+            solidityNode: 'https://api.nileex.io',
+            eventServer: 'https://event.nileex.io',
+            default: false,
+            chain: '_',
+            chainType: 0,
+            netType: 1,
+            connectChain: false,
+            hostname: 'https://nile.tronscan.org/#'
+        },
+        '51a36e5a-2480-4b57-989c-539345a13be2': {
+            name: 'DappChain Mainnet',
+            fullNode: 'https://sun.tronex.io',
+            solidityNode: 'https://sun.tronex.io',
+            eventServer: 'https://sun.tronex.io',
+            default: true,
+            chain: SIDE_CHAIN_ID,
+            connect: '109c64ad-e59c-46fe-ba87-179587e6c772',
+            chainType: 1,
+            netType: 0,
+            mainGateway: CONTRACT_ADDRESS.MAIN,
+            sideGateway: CONTRACT_ADDRESS.SIDE,
+            sideChainId: SIDE_CHAIN_ID,
+            connectChain: {
+                fullNode: 'https://api.trongrid.io',
+                solidityNode: 'https://api.trongrid.io',
+                eventServer: 'https://api.trongrid.io',
+            },
+            hostname: 'https://dappchain.tronscan.io/#'
+        },
+        '01eda3a0-5a58-4e44-9f95-f7f1f59dd728': {
+            name: 'DappChain Tronex Testnet',
+            fullNode: 'https://suntest.tronex.io',
+            solidityNode: 'https://suntest.tronex.io',
+            eventServer: 'https://suntest.tronex.io',
+            default: false,
+            chain: SIDE_CHAIN_ID,
+            connect: 'f14212e2-a6a0-4391-9419-07b55f8be63e',
+            chainType: 1,
+            netType: 1,
+            mainGateway: CONTRACT_ADDRESS.MAIN_TEST,
+            sideGateway: CONTRACT_ADDRESS.SIDE_TEST,
+            sideChainId: SIDE_CHAIN_ID_TEST,
+            connectChain: {
+                fullNode: 'https://testhttpapi.tronex.io',
+                solidityNode: 'https://testhttpapi.tronex.io',
+                eventServer: 'https://testapi.tronex.io',
+            },
+            hostname: 'https://dappchain.tronscan.io/#'
+        },
 
     },
-    _selectedChain:'_',
-    _selectedNode: 'f0b1e38e-7bee-485e-9d3f-69410bf30681',
+    _selectedChain: '_',
+    _selectedNode: '109c64ad-e59c-46fe-ba87-179587e6c772',
     _read() {
         logger.info('Reading nodes and chains from storage');
 
@@ -73,36 +148,55 @@ const NodeService = {
             chainList = {},
             selectedChain = false
         } = StorageService.chains;
-        this._chains = {...this._chains,...chainList};
+        this._chains = { ...this._chains, ...chainList };
 
         const {
             nodeList = {},
             selectedNode = false
         } = StorageService.nodes;
 
-
         this._nodes = {
             ...this._nodes,
             ...nodeList,
         };
 
+        let temp = {};
 
-        this._nodes = Object.entries(this._nodes).map(([nodeId, node])=>{
-            if(!node.hasOwnProperty('chain')){
-                node.chain = '_';
+        Object.keys(this._nodes).forEach((id) => {
+
+            if (Object.keys(temp).length === 0) {
+                temp[id] = this._nodes[id];
             }
-            return [nodeId, node];
-        }).reduce((accumulator, currentValue)=>{accumulator[currentValue[0]]=currentValue[1];return accumulator;},{});
 
-        if(selectedChain)
+            let flag = false;
+
+            Object.keys(temp).forEach((_id) => {
+
+                if (temp[_id].fullNode === this._nodes[id].fullNode) {
+                    flag = true;
+                }
+
+            });
+
+            if (!flag) {
+                temp[id] = this._nodes[id];
+            }
+
+        });
+
+        this._nodes = temp;
+
+        if (selectedChain) {
             this._selectedChain = selectedChain;
+        }
 
-        if(selectedNode)
+        if (selectedNode) {
             this._selectedNode = selectedNode;
+        }
     },
 
     init() {
-        this._read();
+       // this._read();
         this._updateTronWeb();
     },
 
@@ -110,48 +204,77 @@ const NodeService = {
         const {
             fullNode,
             solidityNode,
-            eventServer
+            eventServer,
+            chainType,
+            connectChain,
+            mainGateway,
+            sideGateway,
+            sideChainId,
         } = this.getCurrentNode();
+        if (Number(chainType) === 0) {
+            this.tronWeb = new TronWeb(
+                fullNode,
+                solidityNode,
+                eventServer
+            );
+            if (connectChain) {
+               this.sunWeb = new SunWeb(
+                new TronWeb(
+                    fullNode,
+                    solidityNode,
+                    eventServer,
+               ), new TronWeb(
+                   connectChain.fullNode,
+                   connectChain.solidityNode,
+                   connectChain.eventServer,
+               ),
+               connectChain.mainGateway,
+               connectChain.sideGateway,
+               connectChain.chainId);
+            } else {
+                this.sunWeb.mainchain = new TronWeb(fullNode,
+                    solidityNode,
+                    eventServer,)
+            }
+        } else  {
+            this.tronWeb = new TronWeb(connectChain.fullNode, connectChain.solidityNode, connectChain.eventServer);
 
-        this.sunWeb = new SunWeb(
-            //{fullNode:'https://api.trongrid.io',solidityNode:'https://api.trongrid.io',eventServer:'https://api.trongrid.io'},
-            //{fullNode:'https://sun.tronex.io',solidityNode:'https://sun.tronex.io',eventServer:'https://sun.tronex.io'},
-            NODE.MAIN,
-            NODE.SIDE,
-            CONTRACT_ADDRESS.MAIN,
-            CONTRACT_ADDRESS.SIDE,
-            SIDE_CHAIN_ID
-        );
-
-        this.tronWeb = new TronWeb(
-            fullNode,
-            solidityNode,
-            eventServer
-        );
-        if(!skipAddress)
+            this.sunWeb = new SunWeb(
+                new TronWeb(connectChain.fullNode, connectChain.solidityNode, connectChain.eventServer),
+                new TronWeb(fullNode, solidityNode, eventServer),
+                mainGateway,
+                sideGateway,
+                sideChainId);
+        }
+        if (!skipAddress) {
             this.setAddress();
+        }
     },
 
     setAddress() {
-        if(!this.tronWeb)
+        if (!this.tronWeb) {
             this._updateTronWeb();
+        }
 
-        if(!StorageService.selectedAccount)
+        if (!StorageService.selectedAccount) {
             return this._updateTronWeb(true);
+        }
 
         this.tronWeb.setAddress(
             StorageService.selectedAccount
         );
+        this.sunWeb.mainchain.setAddress(StorageService.selectedAccount);
+        this.sunWeb.sidechain.setAddress(StorageService.selectedAccount);
     },
 
     save() {
 
-        Object.entries(this._nodes).forEach(([ nodeID, node ]) => (
+        Object.entries(this._nodes).forEach(([nodeID, node]) => (
             StorageService.saveNode(nodeID, node)
         ));
 
-        Object.entries(this._chains).forEach(( [chainId, chain ])=>{
-            StorageService.saveChain(chainId, chain)
+        Object.entries(this._chains).forEach(([chainId, chain]) => {
+            StorageService.saveChain(chainId, chain);
         });
 
         StorageService.selectChain(this._selectedChain);
@@ -166,6 +289,11 @@ const NodeService = {
         };
     },
 
+    updateNodes(nodes){
+        this._nodes = nodes;
+        this.save();
+    },
+
     getChains() {
         return {
             chains: this._chains,
@@ -174,7 +302,7 @@ const NodeService = {
     },
 
     getCurrentNode() {
-        return this._nodes[ this._selectedNode ];
+        return this._nodes[this._selectedNode];
     },
 
     selectNode(nodeID) {
@@ -187,11 +315,11 @@ const NodeService = {
     deleteNode(nodeID) {
         StorageService.deleteNode(nodeID);
         delete this._nodes[nodeID];
-        if(nodeID === this._selectedNode) {
-            const nodeId = Object.entries(this._nodes).filter(([nodeId,node])=>node.default && node.chain === this._selectedChain)[0][0];
+        if (nodeID === this._selectedNode) {
+            const nodeId = Object.entries(this._nodes).filter(([nodeId, node]) => node.default && node.chain === this._selectedChain)[0][0];
             this.selectNode(nodeId);
             return nodeId;
-        }else{
+        } else {
             return false;
         }
     },
@@ -204,9 +332,9 @@ const NodeService = {
 
     addNode(node) {
         const nodeID = randomUUID();
-
-        this._nodes[ nodeID ] = {
+        this._nodes[nodeID] = {
             ...node,
+            chainType: 0,
             default: false
         };
         this.save();
@@ -216,14 +344,15 @@ const NodeService = {
     async getSmartToken(address) {
         try {
             let balance;
-            const contract = await this.tronWeb.contract().at(address);
-            if(!contract.name && !contract.symbol && !contract.decimals)
+            const contract = this._selectedChain === '_' ? await this.tronWeb.contract(REFER_ABI, address) : await this.sunWeb.sidechain.contract(REFER_ABI, address);
+            if (!contract.name && !contract.symbol && !contract.decimals) {
                 return false;
-            const d = await contract.decimals().call();
-            const name = await contract.name().call();
-            const symbol = await contract.symbol().call();
+            }
+            const d = await contract.decimals().call({ _isConstant: true });
+            const name = await contract.name().call({ _isConstant: true });
+            const symbol = await contract.symbol().call({ _isConstant: true });
             const decimals = typeof d === 'object' && d._decimals ? d : new BigNumber(d).toNumber();
-            const number = await contract.balanceOf(address).call();
+            const number = await contract.balanceOf(this.tronWeb.defaultAddress.base58).call({_isConstant:true});
             if (number.balance) {
                 balance = new BigNumber(number.balance).toString();
             } else {
@@ -231,12 +360,12 @@ const NodeService = {
             }
 
             return {
-                name: typeof name === 'object' ? name._name: name,
-                symbol: typeof symbol === 'object' ? symbol._symbol: symbol,
-                decimals: typeof decimals === 'object' ? decimals._decimals: decimals,
+                name: typeof name === 'object' ? name._name : name,
+                symbol: typeof symbol === 'object' ? symbol._symbol : symbol,
+                decimals: typeof decimals === 'object' ? decimals._decimals : decimals,
                 balance
             };
-        } catch(ex) {
+        } catch (ex) {
             logger.error(`Failed to fetch token ${ address }:`, ex);
             return false;
         }

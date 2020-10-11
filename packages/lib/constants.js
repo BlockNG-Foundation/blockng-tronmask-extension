@@ -29,7 +29,10 @@ export const APP_STATE = {
     LEDGER: 22, // [X] connect ledger wallet
     LEDGER_IMPORT_ACCOUNT: 23, // [X] connect ledger wallet
     NODE_MANAGE:24, // node manage
-    TRANSFER:25 // transfer
+    TRANSFER:25, // transfer
+    ADDRESS_BOOK:26, // ADDRESS_MANAGE
+    ADDRESS_BOOK_DETAIL:27, // ADDRESS_MANAGE
+    EXPORT_ACCOUNT: 29,
 }; // User can delete *all* accounts. This will set the appState to UNLOCKED.
 
 export const ACCOUNT_TYPE = {
@@ -42,11 +45,6 @@ export const VALIDATION_STATE = {
     NONE: 'no-state',
     INVALID: 'is-invalid',
     VALID: 'is-valid'
-};
-
-export const BANK_STATE = {
-    INVALID: false,
-    VALID: true
 };
 
 export const CREATION_STAGE = {
@@ -66,6 +64,14 @@ export const RESTORATION_STAGE = {
     IMPORT_KEY_STORE: 7,
     SUCCESS: 6
 };
+
+export const EXPORT_STAGE = {
+    CHOOSING_TYPE: 1,
+    EXPORT_PAGE: 2,
+    EXPORT_PRIVATE_KEY: 3,
+    EXPORT_MNEMONIC: 4,
+    EXPORT_KEY_STORE: 5,
+}
 
 export const BUTTON_TYPE = {
     PRIMARY: 'primary',
@@ -98,88 +104,113 @@ export const CONFIRMATION_TYPE = {
 
 export const CONTRACT_ADDRESS = {
     USDT:"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-    MAIN:"TWaPZru6PR5VjgT4sJrrZ481Zgp3iJ8Rfo",
+    MAIN:"TL9q7aDAHYbW5KdPCwk8oJR3bCDhRwegFf",
     SIDE:"TGKotco6YoULzbYisTBuP6DWXDjEgJSpYz",
-    //MAIN:"TFLtPoEtVJBMcj6kZPrQrwEdM3W3shxsBU", //testnet mainchain
-    //SIDE:"TRDepx5KoQ8oNbFVZ5sogwUxtdYmATDRgX", //testnet sidechain
-};
-
-export const USDT_ACTIVITY_STAGE = {
-    1:{
-        rate:20,
-        start:'4.30',
-        end:'5.4',
-        days:5,
-        stage:1
-    },
-    2:{
-        rate:12,
-        start:'5.5',
-        end:'5.9',
-        days:5,
-        stage:2
-    },
-    3:{
-        rate:10,
-        start:'5.10',
-        end:'5.14',
-        days:5,
-        stage:3
-    },
-    4:{
-        rate:8,
-        start:'5.15',
-        end:'5.21',
-        days:7,
-        stage:4
-    },
-    5:{
-        rate:5,
-        start:'5.22',
-        end:'5.31',
-        days:10,
-        stage:5
-    },
-    6:{
-        rate:3,
-        start:'6.1',
-        end:'6.14',
-        days:14,
-        stage:6
-    },
-    7:{
-        rate:1,
-        start:'6.15',
-        end:'8.7',
-        days:54,
-        stage:7
-    }
-
+    MAIN_TEST:"TFLtPoEtVJBMcj6kZPrQrwEdM3W3shxsBU", //testnet mainchain
+    SIDE_TEST:"TRDepx5KoQ8oNbFVZ5sogwUxtdYmATDRgX", //testnet sidechain
+    MAIN_TEST_NILE: "TTYtjySdWFkZeUnQEB7cfwyxj3PD2ZsEmd",
+    SIDE_TEST_NILE: "TWLoD341FRJ43JfwTPADRqGnUT4zEU3UxG",
 };
 
 export const TOP_TOKEN = {
     mainchain:[
         'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
         '1002000',
-        'TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7'
+        'TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7',
+        'TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT',
+        'TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9'
     ],
     sidechain:['1002000']
 };
 
 export const SIDE_CHAIN_ID = '41E209E4DE650F0150788E8EC5CAFA240A23EB8EB7';
-//export const SIDE_CHAIN_ID = '413AF23F37DA0D48234FDD43D89931E98E1144481B';
+export const SIDE_CHAIN_ID_TEST = '413AF23F37DA0D48234FDD43D89931E98E1144481B';
+export const SIDE_CHAIN_ID_TEST_NILE = '41C0D909CC323543142E77AAD3786389364B981EEC';
 
 export const NODE = {
-    //MAIN: {fullNode:'http://47.252.84.158:8070',solidityNode:'http://47.252.84.158:8071',eventServer:'http://47.252.81.14:8070'},
-    //SIDE: {fullNode:'http://47.252.85.90:8070',solidityNode:'http://47.252.85.90:8071',eventServer:'http://47.252.87.129:8070'},
     MAIN: {fullNode: 'https://api.trongrid.io', solidityNode: 'https://api.trongrid.io', eventServer: 'https://api.trongrid.io'},
     SIDE: {fullNode: 'https://sun.tronex.io', solidityNode: 'https://sun.tronex.io', eventServer: 'https://sun.tronex.io'}
 };
 export const FEE = {
-    WITHDRAW_FEE:10000000,
+    WITHDRAW_FEE:0,
     DEPOSIT_FEE:0,
     FEE_LIMIT:100000000,
     MIN_DEPOSIT_OR_WITHDRAW:10000000
 };
 
-export const API_URL = 'https://list.tronlink.org';
+export const mainNetList = ['109c64ad-e59c-46fe-ba87-179587e6c772', '8eeb5be6-5e10-4283-ae61-03c0e4726fe0', '51a36e5a-2480-4b57-989c-539345a13be2'];
+
+export const REFER_ABI = [{
+    'constant': true,
+    'inputs': [],
+    'name': 'name',
+    'outputs': [{ 'name': '', 'type': 'string' }],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+}, {
+    'constant': false,
+    'inputs': [{ 'name': 'spender', 'type': 'address' }, { 'name': 'value', 'type': 'uint256' }],
+    'name': 'approve',
+    'outputs': [{ 'name': '', 'type': 'bool' }],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+}, {
+    'constant': false,
+    'inputs': [{ 'name': 'from', 'type': 'address' }, { 'name': 'to', 'type': 'address' }, {
+        'name': 'value',
+        'type': 'uint256'
+    }],
+    'name': 'transferFrom',
+    'outputs': [{ 'name': '', 'type': 'bool' }],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+}, {
+    'constant': true,
+    'inputs': [],
+    'name': 'decimals',
+    'outputs': [{ 'name': '', 'type': 'uint8' }],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+}, {
+    'constant': true,
+    'inputs': [{ 'name': 'owner', 'type': 'address' }],
+    'name': 'balanceOf',
+    'outputs': [{ 'name': '', 'type': 'uint256' }],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+}, {
+    'constant': true,
+    'inputs': [],
+    'name': 'symbol',
+    'outputs': [{ 'name': '', 'type': 'string' }],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+}, {
+    'constant': false,
+    'inputs': [{ 'name': 'to', 'type': 'address' }, { 'name': 'value', 'type': 'uint256' }],
+    'name': 'transfer',
+    'outputs': [{ 'name': '', 'type': 'bool' }],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+}, {
+    'inputs': [{ 'name': 'name', 'type': 'string' }, { 'name': 'symbol', 'type': 'string' }, {
+        'name': 'decimals',
+        'type': 'uint8'
+    }], 'payable': false, 'stateMutability': 'nonpayable', 'type': 'constructor'
+}, {
+    'anonymous': false,
+    'inputs': [{ 'indexed': true, 'name': 'from', 'type': 'address' }, {
+        'indexed': true,
+        'name': 'to',
+        'type': 'address'
+    }, { 'indexed': false, 'name': 'value', 'type': 'uint256' }],
+    'name': 'Transfer',
+    'type': 'event'
+}];

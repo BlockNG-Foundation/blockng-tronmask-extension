@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
+import { PopupAPI } from '@tronmask/lib/api';
 import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -21,18 +21,20 @@ class DappWhitelistController extends React.Component {
                 <div className='greyModal scroll'>
                     <div className='white'>
                     {
-                        Object.values(authorizeDapps).sort((a,b)=>b.addTime - a.addTime).map(({url, addTime, contract},index)=>{
+                        Object.values(authorizeDapps).sort((a,b)=>b.addTime - a.addTime).map(({url, addTime},index)=>{
                             return (
                                 <div className='dapp'>
                                     <div className='url'>
                                         <FormattedMessage id='DAPP_WHITELIST.URL' />
-                                        <a target="_blank" href={'http://'+url}>{url}</a>
+                                        <a target="_blank" onClick={()=>{
+                                            window.open('http://'+url);
+                                        }}>{url}</a>
                                         <div className='delete' onClick={()=>{
-                                            const dapps = Object.values(authorizeDapps).filter(({contract:address}) => contract !== address ).reduce((v,c)=>{v[c.contract] = c;return v;},{});
+                                            const dapps = Object.values(authorizeDapps).filter(({url:hostname}) => url !== hostname ).reduce((v,c)=>{v[c.url] = c;return v;},{});
                                             PopupAPI.setAuthorizeDapps(dapps);
                                         }}>&nbsp;</div>
                                     </div>
-                                    <div className='row'>
+                                    {/*<div className='row'>
                                         <FormattedMessage id='DAPP_WHITELIST.CONTRACT_ADDRESS' />
                                         <CopyToClipboard text={ contract } onCopy={() => {
                                                 Object.keys(authorizeDapps).forEach((v,i)=>{
@@ -47,7 +49,7 @@ class DappWhitelistController extends React.Component {
                                                 <ReactTooltip id={'contract'+index} effect='solid' />
                                             </span>
                                         </CopyToClipboard>
-                                    </div>
+                                    </div>*/}
                                     <div className='row'>
                                         <FormattedMessage id='DAPP_WHITELIST.ADD_TIME' />
                                         <span>{moment(addTime).format('YYYY-MM-DD HH:mm')}</span>

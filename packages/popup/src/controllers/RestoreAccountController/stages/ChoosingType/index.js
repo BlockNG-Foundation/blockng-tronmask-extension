@@ -4,7 +4,8 @@ import { FormattedMessage } from 'react-intl';
 
 import {
     RESTORATION_STAGE
-} from '@tronlink/lib/constants';
+} from '@tronmask/lib/constants';
+import {PopupAPI} from "@tronmask/lib/api";
 
 const ChoosingType = props => {
     const {
@@ -19,13 +20,19 @@ const ChoosingType = props => {
                 <FormattedMessage id="CHOOSING_TYPE.TITLE" />
             </div>
             <div className='greyModal'>
-                <div className='option' onClick={ () => onSubmit(RESTORATION_STAGE.IMPORT_MNEMONIC) }>
+                <div className='option' onClick={ () => {
+                    onSubmit(RESTORATION_STAGE.IMPORT_MNEMONIC)
+                }}>
                     <FormattedMessage id='CHOOSING_TYPE.MNEMONIC.TITLE' />
                 </div>
-                <div className='option' onClick={ () => onSubmit(RESTORATION_STAGE.IMPORT_PRIVATE_KEY) }>
+                <div className='option' onClick={ () => {
+                    onSubmit(RESTORATION_STAGE.IMPORT_PRIVATE_KEY);
+                }}>
                     <FormattedMessage id='CHOOSING_TYPE.PRIVATE_KEY.TITLE' />
                 </div>
-                <div className='option' onClick={ () => onSubmit(RESTORATION_STAGE.IMPORT_KEY_STORE) }>
+                <div className='option' onClick={ () => {
+                    onSubmit(RESTORATION_STAGE.IMPORT_KEY_STORE);
+                } }>
                     <FormattedMessage id='CHOOSING_TYPE.KEY_STORE.TITLE' />
                 </div>
             </div>

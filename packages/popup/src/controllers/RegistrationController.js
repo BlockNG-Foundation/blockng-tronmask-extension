@@ -4,8 +4,8 @@ import Button from 'components/Button';
 import InputCriteria from 'components/InputCriteria';
 
 import { FormattedMessage } from 'react-intl';
-import { VALIDATION_STATE } from '@tronlink/lib/constants';
-import { PopupAPI } from '@tronlink/lib/api';
+import { VALIDATION_STATE } from '@tronmask/lib/constants';
+import { PopupAPI } from '@tronmask/lib/api';
 
 class RegistrationController extends React.Component {
     state = {
@@ -26,7 +26,7 @@ class RegistrationController extends React.Component {
         languages: [
             { name: 'English', key: 'en', selected: true },
             { name: '中文', key: 'zh', selected: false },
-            { name: '日本語', key: 'ja', selected: false },
+            // { name: '日本語', key: 'ja', selected: false },
         ]
     };
 

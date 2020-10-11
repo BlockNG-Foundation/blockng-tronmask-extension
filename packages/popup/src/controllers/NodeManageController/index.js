@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { VALIDATION_STATE } from "@tronlink/lib/constants";
-import Confirmation from '@tronlink/popup/src/components/Confirmation';
-import { PopupAPI } from '@tronlink/lib/api';
-import { app } from "@tronlink/popup/src";
-import Button from '@tronlink/popup/src/components/Button';
+import { VALIDATION_STATE } from "@tronmask/lib/constants";
+import Confirmation from '@tronmask/popup/src/components/Confirmation';
+import { PopupAPI } from '@tronmask/lib/api';
+import { app } from "@tronmask/popup/src";
+import Button from '@tronmask/popup/src/components/Button';
 import { Toast } from 'antd-mobile';
 
 import './NodeManageController.scss';
@@ -67,7 +67,7 @@ class NodeManageController extends React.Component {
         const isValid =
             nameState === VALIDATION_STATE.VALID &&
             customNode.fullNode.state === VALIDATION_STATE.VALID &&
-            customNode.solidityNode.state === VALIDATION_STATE.VALID &&
+            // customNode.solidityNode.state === VALIDATION_STATE.VALID &&
             customNode.eventServer.state === VALIDATION_STATE.VALID;
 
         this.setState({
@@ -111,7 +111,7 @@ class NodeManageController extends React.Component {
         const isValid =
             customNode.name.state === VALIDATION_STATE.VALID &&
             customNode.fullNode.state === VALIDATION_STATE.VALID &&
-            customNode.solidityNode.state === VALIDATION_STATE.VALID &&
+            // customNode.solidityNode.state === VALIDATION_STATE.VALID &&
             customNode.eventServer.state === VALIDATION_STATE.VALID;
 
         this.setState({
@@ -131,13 +131,13 @@ class NodeManageController extends React.Component {
         const { customNode,selectedChain } = this.state;
         const name = customNode.name.value.trim();
         const fullNode = customNode.fullNode.value.trim();
-        const solidityNode = customNode.solidityNode.value.trim();
+        // const solidityNode = customNode.solidityNode.value.trim();
         const eventServer = customNode.eventServer.value.trim();
 
         PopupAPI.addNode({
             name,
             fullNode,
-            solidityNode,
+            solidityNode: fullNode,
             eventServer,
             chain:selectedChain,
             isDelete:true
@@ -180,9 +180,24 @@ class NodeManageController extends React.Component {
         this.setState({showDeleteNodeDialog:false});
     }
 
+    linkNode = (chainId) => {
+
+        if(this.state.selectedChain === chainId){
+            return;
+        }
+        this.setState({selectedChain: chainId});
+        const {nodes} = this.props;
+
+        const connect = nodes.nodes[nodes.selected].connect;
+        if(connect){
+            PopupAPI.selectNode(connect);
+        }
+        app.getNodes();
+    }
+
     render() {
         const { showDeleteNodeDialog, showAddNodeDialog, selectedChain } = this.state;
-        const { name, fullNode, solidityNode, eventServer, isValid } = this.state.customNode;
+        const { name, fullNode, eventServer, isValid } = this.state.customNode;
         const { nodes, chains, onCancel } = this.props;
         const { formatMessage } = this.props.intl;
 
@@ -212,15 +227,6 @@ class NodeManageController extends React.Component {
                                     !isValid && fullNode.state === VALIDATION_STATE.INVALID ? <div className="tipError"><FormattedMessage id="EXCEPTION.ADD_NODE.NODE_URL" /></div>:null
                                 }
                                 <label>
-                                    <FormattedMessage id="SETTINGS.NODES.SOLIDITY_NODE" />
-                                </label>
-                                <div className="input">
-                                    <input type="text" value={solidityNode.value} placeholder={formatMessage({id:"SETTINGS.CUSTOM_NODE.SOLIDITY_NODE.PLACEHOLDER"})} onChange={ e => this.onCustomNodeChange('solidityNode', e.target.value) }/>
-                                </div>
-                                {
-                                    !isValid && solidityNode.state === VALIDATION_STATE.INVALID ? <div className="tipError"><FormattedMessage id="EXCEPTION.ADD_NODE.NODE_URL" /></div>:null
-                                }
-                                <label>
                                     <FormattedMessage id="SETTINGS.NODES.EVENT_SERVER" />
                                 </label>
                                 <div className="input">
@@ -241,11 +247,13 @@ class NodeManageController extends React.Component {
                 <div className='pageHeader'>
                     <div className='back' onClick={ () => onCancel() }>&nbsp;</div>
                     <FormattedMessage id='SETTING.TITLE.NODE_MANAGE' />
-                    <div className="chains">
-                        {chains.chains[selectedChain].name}
+                    <div className={'chains'}>
+                        <span>
+                            {chains.chains[selectedChain].name}
+                        </span>
                         <div className="chainWrap">
                             {
-                                Object.entries(chains.chains).map(([chainId,chain])=><div className="item" onClick={()=>this.setState({selectedChain:chainId})}>{chain.name}</div>)
+                                Object.entries(chains.chains).map(([chainId,chain])=><div className={"item " + (selectedChain === chainId ? 'checked' : '')} onClick={()=>this.linkNode(chainId)}>{chain.name}</div>)
                             }
                         </div>
                     </div>
@@ -255,9 +263,13 @@ class NodeManageController extends React.Component {
                         {
                             Object.entries(nodes.nodes).filter(([nodeId,node])=> node.chain === selectedChain).map(([nodeId, {name, fullNode, solidityNode, eventServer, isDelete = false}])=>{
                                 return(
-                                    <div className='item' onClick={()=>{
-                                        PopupAPI.selectNode(nodeId);
-                                        app.getNodes();
+                                    <div className='item' onClick={async ()=>{
+                                        Toast.loading(null,null, null, true);
+                                        await PopupAPI.selectNode(nodeId);
+                                        await app.getNodes();
+                                        setTimeout(()=>{
+                                            Toast.hide();
+                                        }, Math.round(Math.random() * 400) + 1300);
                                     }}>
                                         <div className={'r1'+(nodeId === nodes.selected?' selected':'')}>
                                             {name}
@@ -269,15 +281,21 @@ class NodeManageController extends React.Component {
                                         <div className='r2'>
                                             <div className='cell'>
                                                 <FormattedMessage id="SETTINGS.NODES.FULL_NODE" />
-                                                <span>{fullNode}</span>
-                                            </div>
-                                            <div className='cell'>
-                                                <FormattedMessage id="SETTINGS.NODES.SOLIDITY_NODE" />
-                                                <span>{solidityNode}</span>
+                                                {
+                                                    fullNode.length<=30&&<span>{fullNode}</span>
+                                                }
+                                                {
+                                                    fullNode.length>30&&<span>{fullNode.substring(0,30)}...</span>
+                                                }
                                             </div>
                                             <div className='cell'>
                                                 <FormattedMessage id="SETTINGS.NODES.EVENT_SERVER" />
-                                                <span>{eventServer}</span>
+                                                {
+                                                    eventServer.length<=30&&<span>{eventServer}</span>
+                                                }
+                                                {
+                                                    eventServer.length>30&&<span>{eventServer.substring(0,30)}...</span>
+                                                }
                                             </div>
                                         </div>
                                     </div>

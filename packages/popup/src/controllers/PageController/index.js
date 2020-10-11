@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { setPage } from '@tronlink/popup/src/reducers/appReducer';
+import { setPage } from '@tronmask/popup/src/reducers/appReducer';
 
-import AccountsPage from '@tronlink/popup/src/pages/AccountsPage';
+import AccountsPage from '@tronmask/popup/src/pages/AccountsPage';
 import './PageController.scss';
 
 class PageController extends React.Component {
@@ -38,8 +38,9 @@ class PageController extends React.Component {
             subTitle: false
         });
 
-        if(callbacks[ nextPage ])
-            callbacks[ nextPage ]();
+        if (callbacks[nextPage]) {
+            callbacks[nextPage]();
+        }
     }
 
     setSubTitle(subTitle) {
@@ -51,7 +52,7 @@ class PageController extends React.Component {
     onPageChange(index, callback) {
         const { callbacks } = this.state;
 
-        callbacks[ index ] = callback;
+        callbacks[index] = callback;
 
         this.setState({
             callbacks
@@ -66,15 +67,15 @@ class PageController extends React.Component {
         return (
             <div className='pageContainer'>
                 <div className='pageView'>
-                    { Object.values(pages).map((Page, index) => {
+                    {Object.values(pages).map((Page, index) => {
                         const pageOffset = (index - currentPage) * 420;
 
                         return (
                             <div
                                 className='page'
-                                key={ index }
+                                key={index}
                                 style={{
-                                    transform: `translateX(${ pageOffset }px)`
+                                    transform: `translateX(${pageOffset}px)`
                                 }}
                             >
                                 <Page
@@ -84,7 +85,7 @@ class PageController extends React.Component {
                                 />
                             </div>
                         );
-                    }) }
+                    })}
                 </div>
             </div>
         );

@@ -1,11 +1,11 @@
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
-import Utils from '@tronlink/lib/utils';
+import Button from '@tronmask/popup/src/components/Button';
+import Utils from '@tronmask/lib/utils';
 import Toast, { T } from 'react-toast-mobile';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import NodeService from '@tronlink/backgroundScript/services/NodeService';
-import { PopupAPI } from '@tronlink/lib/api';
+import NodeService from '@tronmask/backgroundScript/services/NodeService';
+import { PopupAPI } from '@tronmask/lib/api';
 
 import './MnemonicImport.scss';
 const IMPORT_STAGE = {
@@ -34,7 +34,8 @@ class MnemonicImport extends React.Component {
     }
 
     onChange({ target: { value } }) {
-        const isValid = Utils.validateMnemonic(value);
+        const checkValue = value.replace('balance10_TRX', 'balance');
+        const isValid = Utils.validateMnemonic(checkValue);
         const error = !isValid ? 'EXCEPTION.FORMAT_ERROR_MNEMONIC' : '';
         this.setState({
             mnemonic: value,
@@ -62,9 +63,11 @@ class MnemonicImport extends React.Component {
             isLoading: true
         });
         const { chains } = this.props;
-        const { mnemonic } = this.state;
+        let { mnemonic } = this.state;
         const { formatMessage } = this.props.intl;
         const addresses = [];
+        // Replacing an app's incorrect thesaurus
+        mnemonic = mnemonic.replace('balance10_TRX', 'balance')
         for(let i = 0; i < 5; i++) {
             let account = Utils.getAccountAtIndex(
                 mnemonic,
@@ -72,9 +75,11 @@ class MnemonicImport extends React.Component {
             );
             if(!(account.address in this.props.accounts)) {
                 const accountInfo = await PopupAPI.getAccountInfo(account.address);
-                let balance = accountInfo[chains === '_'? 'mainchain':'sidechain'].balance;
+                let balance = accountInfo[chains && chains.selected === '_' ? 'mainchain' : 'sidechain'].balance;
                 balance = balance ? balance:0;
                 account.balance = balance;
+                account.mnemonic = mnemonic;
+                account.index = i;
                 addresses.push(account);
             }
 
@@ -122,11 +127,16 @@ class MnemonicImport extends React.Component {
 
         for(const internalIndex of selected) {
             i++;
-            const { privateKey } = addresses[ internalIndex ];
+            const { privateKey, mnemonic, index } = addresses[ internalIndex ];
             const walletName = isSingle ? name : `${ name } #${ i }`;
-            await PopupAPI.importAccount(
-                privateKey,
-                walletName
+            // await PopupAPI.importAccount(
+            //     privateKey,
+            //     walletName
+            // );
+            await PopupAPI.addAccount(
+                mnemonic,
+                walletName,
+                index
             );
         }
         PopupAPI.resetState();
