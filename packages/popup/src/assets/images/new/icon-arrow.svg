@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="8px" viewBox="0 0 12 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="318.59 108 314 112.58 309.41 108 308 109.41 314 115.41 320 109.41"></polygon>
+    </defs>
+    <g id="V3.9" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="消耗TRX" transform="translate(-328.000000, -362.000000)">
+            <g id="编组-6" transform="translate(20.000000, 254.000000)">
+                <g id="价钱">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Shape" fill="#9C9DAC" fill-rule="nonzero" opacity="0.6" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="8px" viewBox="0 0 12 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63 (92445) - https://sketch.com -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="304.59 11 300 15.58 295.41 11 294 12.41 300 18.41 306 12.41"></polygon>
+    </defs>
+    <g id="V3.9" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="自动签名" transform="translate(-314.000000, -487.000000)">
+            <g id="Group-3" transform="translate(0.000000, 412.000000)">
+                <g id="Group-2" transform="translate(20.000000, 64.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Shape" fill="#636ACC" fill-rule="nonzero" transform="translate(300.000000, 14.705000) scale(1, -1) translate(-300.000000, -14.705000) " xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
